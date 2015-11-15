@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ReplState" timestamp="1447507680423">{:repl-history {:ide [], :local [&quot;(+ 1 5)&quot; &quot;(ns PayrolleeMate.Common.Period)\n(defprotocol ProtocolEquals\n  (is_equal [this other]))\n(defprotocol ProtocolOrders\n  (is_greater_than [this other])\n  (is_less_than [this other]))\n\n(defrecord MonthPeriod [code]\n  ProtocolEquals\n  (is_equal [this other]\n    (= (:code this) (:code other)))\n  ProtocolOrders\n  (is_greater_than [this other]\n    (&gt; (:code this) (:code other)))\n  (is_less_than [this other]\n    (&lt; (:code this) (:code other))))&quot; &quot;(MonthPeriod. 201512)&quot;], :remote []}}</component>
+</project>
