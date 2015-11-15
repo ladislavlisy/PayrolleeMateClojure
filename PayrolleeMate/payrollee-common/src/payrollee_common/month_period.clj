@@ -1,31 +1,34 @@
 (ns payrollee-common.month-period
-  (:import [java.util Locale])
+  (:use [payrollee-common.core])
   (require [clj-time.core :as t])
-  (require [clj-time.format :as f]))
+  (require [clj-time.format :as f])
+  (:import [java.util Locale])
+  (:import [java.time YearMonth]))
 
-  (defprotocol protocol-equals
-    (is_equal [this other]))
-  (defprotocol protocol-compare
-    (is_greater_than [this other])
-    (is_less_than [this other]))
+(defrecord month-period [code]
+  Comparable
+  (compareTo [this other]
+    (- (:code this) (:code other)))
+  protocol-equals
+  (is_equal [this other]
+    (= (:code this) (:code other)))
+  protocol-compare
+  (is_greater_than [this other]
+    (> (:code this) (:code other)))
+  (is_less_than [this other]
+    (< (:code this) (:code other))))
 
-  (defrecord month-period [code]
-    protocol-equals
-    (is_equal [this other]
-      (= (:code this) (:code other)))
-    protocol-compare
-    (is_greater_than [this other]
-      (> (:code this) (:code other)))
-    (is_less_than [this other]
-      (< (:code this) (:code other))))
-
-  (defn period-year [period]
-    (quot (:code period) 100))
-  (defn period-month [period]
-    (mod (:code period) 100))
-  (defn begin-of-month [period]
-    (t/date-time (period-year period) (period-month period) 1 0 0 0 0))
-  (defn period-description [period]
-    (let [first-period-day (begin-of-month period)
-          custom-formatter (f/with-locale (f/formatter "MMMM yyyy") (Locale/ENGLISH))]
-      (f/unparse custom-formatter first-period-day)))
+(defn month-period-year [period]
+  (quot (:code period) 100))
+(defn month-period-month [period]
+  (mod (:code period) 100))
+(defn days-in-month [period]
+  (.lengthOfMonth (YearMonth/of (month-period-year period) (month-period-month period))))
+(defn begin-of-month [period]
+  (t/date-time (month-period-year period) (month-period-month period) 1 0 0 0 0))
+(defn end-of-month [period]
+  (t/date-time (month-period-year period) (month-period-month period) (days-in-month period) 0 0 0 0))
+(defn month-period-description [period]
+  (let [first-period-day (begin-of-month period)
+        custom-formatter (f/with-locale (f/formatter "MMMM yyyy") (Locale/ENGLISH))]
+    (f/unparse custom-formatter first-period-day)))
